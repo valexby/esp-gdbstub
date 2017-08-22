@@ -8,8 +8,8 @@
  *******************************************************************************/
 
 #include "gdbstub.h"
-#include "ets_sys.h"
-#include "eagle_soc.h"
+#include "espressif/esp8266/ets_sys.h"
+#include "espressif/esp8266/eagle_soc.h"
 #include "c_types.h"
 #include "gpio.h"
 #include "xtensa/corebits.h"
@@ -290,7 +290,7 @@ static void ATTR_GDBFN sendReason() {
 #endif
 	//exception-to-signal mapping
 	char exceptionSignal[]={4,31,11,11,2,6,8,0,6,7,0,0,7,7,7,7};
-	int i=0;
+	size_t i=0;
 	gdbPacketStart();
 	gdbPacketChar('T');
 	if (gdbstub_savedRegs.reason==0xff) {
@@ -320,6 +320,7 @@ static void ATTR_GDBFN sendReason() {
 
 //Handle a command as received from GDB.
 static int ATTR_GDBFN gdbHandleCommand(unsigned char *cmd, int len) {
+    (void)len;
 	//Handle a command
 	int i, j, k;
 	unsigned char *data=cmd+1;
@@ -771,7 +772,7 @@ static void ATTR_GDBINIT install_uart_hdlr() {
 
 
 //gdbstub initialization routine.
-void ATTR_GDBINIT gdbstub_init() {
+void ATTR_GDBINIT gdbstub_init(bool break_on_init) {
 #if GDBSTUB_REDIRECT_CONSOLE_OUTPUT
 	os_install_putc1(gdb_semihost_putchar1);
 #endif
@@ -780,8 +781,10 @@ void ATTR_GDBINIT gdbstub_init() {
 #endif
 	install_exceptions();
 	gdbstub_init_debug_entry();
-#if GDBSTUB_BREAK_ON_INIT
-	gdbstub_do_break();
-#endif
+
+  if (break_on_init)
+  {
+      gdbstub_do_break();
+  }
 }
 
