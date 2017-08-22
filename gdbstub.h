@@ -1,14 +1,9 @@
 #ifndef GDBSTUB_H
 #define GDBSTUB_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <stdbool.h>
 
-void gdbstub_init();
-
-#ifdef __cplusplus
-}
-#endif
+void gdbstub_init(bool break_on_init);
+void gdbstub_do_break(void);
 
 #endif
