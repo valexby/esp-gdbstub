@@ -369,7 +369,7 @@ static int ATTR_GDBFN gdbHandleCommand(unsigned char *cmd, int len) {
 				i++;
 			}
 			//Make sure caches are up-to-date. Procedure according to Xtensa ISA document, ISYNC inst desc.
-			asm volatile("ISYNC\nISYNC\n");
+			__asm volatile("ISYNC\nISYNC\n");
 			gdbPacketStart();
 			gdbPacketStr("OK");
 			gdbPacketEnd();
